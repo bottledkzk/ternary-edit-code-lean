@@ -15,7 +15,8 @@ theorem distance_comm {α : Type} [DecidableEq α] (u v : List α) :
       by_cases e : a = b <;> simp [e, Ne.symm, Nat.min_comm]
 termination_by u.length + v.length
 
-private theorem rel_of_distinct_mem {R : α → α → Prop} (sym : ∀ x y, R x y → R y x)
+/-- Read a symmetric pairwise relation off any two distinct list entries. -/
+theorem rel_of_distinct_mem {R : α → α → Prop} (sym : ∀ x y, R x y → R y x)
     {xs : List α} (h : xs.Pairwise R) {x y : α} (hx : x ∈ xs) (hy : y ∈ xs)
     (hne : x ≠ y) : R x y := by
   induction xs with

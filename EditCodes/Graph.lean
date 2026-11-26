@@ -124,26 +124,32 @@ private theorem pack_bit (bs : List Bool) (i : Nat) :
 
 abbrev universeSize := wordCount 8
 
-/-- Row i has bit j set when the two decoded words have distance at least six. -/
-@[noinline] def graphFor (size : Nat) : Array Nat :=
-  (table size).map fun row => pack (row.toList.map (fun v => decide (6 ≤ v)))
+/-- Row i has bit j set when the decoded words have distance at least d. -/
+@[noinline] def graphAt (size d : Nat) : Array Nat :=
+  (table size).map fun row => pack (row.toList.map (fun v => decide (d ≤ v)))
 
-theorem graph_bit {i j : Nat} (hi : i < universeSize) (hj : j < universeSize) :
-    ((graphFor universeSize)[i]?.getD 0).testBit j = decide (6 ≤ distance (word i) (word j)) := by
-  have hsize : (table universeSize).size = universeSize := tabulate_size ..
+theorem graphAt_bit {size d i j : Nat} (hd : 0 < d) (hi : i < size) (hj : j < size) :
+    ((graphAt size d)[i]?.getD 0).testBit j = decide (d ≤ distance (word i) (word j)) := by
+  have hsize : (table size).size = size := tabulate_size ..
   have hr := row_correct hi hj
   have hrow (r : Array Nat) :
-      (pack (r.toList.map (fun v => decide (6 ≤ v)))).testBit j = decide (6 ≤ entry r j) := by
+      (pack (r.toList.map (fun v => decide (d ≤ v)))).testBit j = decide (d ≤ entry r j) := by
     rw [pack_bit]
     simp only [List.getElem?_map, Array.getElem?_toList, entry]
     have bit (o : Option Nat) :
-        (o.map (fun v => decide (6 ≤ v))).getD false = decide (6 ≤ o.getD 0) := by
-      cases o <;> simp
+        (o.map (fun v => decide (d ≤ v))).getD false = decide (d ≤ o.getD 0) := by
+      cases o <;> simp [Nat.not_le.mpr hd]
     exact bit _
-  simp only [graphFor, Array.getElem?_map]
-  cases he : (table universeSize)[i]? with
+  simp only [graphAt, Array.getElem?_map]
+  cases he : (table size)[i]? with
   | none => simp [Array.getElem?_eq_none_iff, hsize, Nat.not_le_of_lt hi] at he
-  | some r => simpa [he, hrow] using congrArg (fun v => decide (6 ≤ v)) hr
+  | some r => simpa [he, hrow] using congrArg (fun v => decide (d ≤ v)) hr
+
+abbrev graphFor (size : Nat) := graphAt size 6
+
+theorem graph_bit {i j : Nat} (hi : i < universeSize) (hj : j < universeSize) :
+    ((graphFor universeSize)[i]?.getD 0).testBit j = decide (6 ≤ distance (word i) (word j)) :=
+  graphAt_bit (by decide) hi hj
 
 /-- The bitmask of long words whose initial letter has the requested value. -/
 private def makeColourMask (c : Nat) : Nat :=

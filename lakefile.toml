@@ -4,4 +4,11 @@ defaultTargets = ["EditCodes"]
 precompileModules = true
 
 [[lean_lib]]
+name = "EditCodesCore"
+roots = []
+globs = ["EditCodes.+"]
+
+[[lean_lib]]
 name = "EditCodes"
+roots = []
+globs = ["EditCodes"]
