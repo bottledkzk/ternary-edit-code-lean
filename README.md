@@ -2,6 +2,8 @@
 
 **The maximum number of ternary words of length at most 8 with pairwise Levenshtein distance at least 6 is exactly 8.** Insertion, deletion and substitution each cost one. The empty word is allowed, and the construction attains length 8.
 
+[中文论文 PDF](output/pdf/ternary-edit-code-8-6.pdf) · [可编辑稿](paper/proof.md) · [Lean 主定理](EditCodes.lean)
+
 截至 2026 年 11 月 25 日，Sheridan Houghten 的原始码表和 Abraham Yeung 于 11 月 16 日更新的码表，都把这个参数项列为 **8–13**。下界 8 已知。本仓库的贡献是给出排除第九个码字的可复算上界，使该表项取得精确值。这里的文献比较限于可核对的公开来源，学术优先权仍需独立审阅。[Brock 大学三元变长码表](https://www.cosc.brocku.ca/~shoughten/ternaryeditvar.html) · [Yeung 编辑码表](https://abrahamyeung.com/edit-codes/)
 
 ## 达到上界的码
