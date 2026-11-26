@@ -1,0 +1,7 @@
+name = "edit_codes"
+version = "0.1.0"
+defaultTargets = ["EditCodes"]
+precompileModules = true
+
+[[lean_lib]]
+name = "EditCodes"

@@ -1,0 +1,26 @@
+name: Verify the optimal code
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Independent C++20 search
+        run: |
+          c++ -O3 -std=c++20 -Wall -Wextra -pedantic verify.cpp -o "$RUNNER_TEMP/check-code"
+          "$RUNNER_TEMP/check-code"
+      - name: Build the Lean proof
+        uses: leanprover/lean-action@ba3fdfe5c4476c925da13bf11a005ddb47e47aee # v1
+        with:
+          auto-config: 'false'
+          build: 'true'
+          use-github-cache: 'false'
+          use-mathlib-cache: 'false'
