@@ -3,14 +3,15 @@ import Std
 namespace EditCodes.Search
 
 /-- Retain the bits at indices strictly below i. -/
-def below (s i : Nat) := s &&& ((1 <<< i) - 1)
+def below (s i : Nat) := if s = 0 then 0 else s &&& ((1 <<< i) - 1)
 
 theorem below_bit (s i j : Nat) :
     (below s i).testBit j = (s.testBit j && decide (j < i)) := by
-  simp [below, Nat.shiftLeft_eq, Bool.and_comm]
+  by_cases h : s = 0 <;> simp [below, h, Nat.shiftLeft_eq, Bool.and_comm]
 
 private theorem below_top_lt (s : Nat) (h : s ≠ 0) : below s s.log2 < s := by
-  have h₁ : below s s.log2 ≤ (1 <<< s.log2) - 1 := Nat.and_le_right
+  have h₁ : below s s.log2 ≤ (1 <<< s.log2) - 1 := by
+    simpa only [below, if_neg h] using (Nat.and_le_right (n := s) (m := (1 <<< s.log2) - 1))
   have h₂ := Nat.log2_self_le h
   simp [Nat.shiftLeft_eq] at h₁
   have := Nat.two_pow_pos s.log2
@@ -53,6 +54,17 @@ def choose (G : Neighbours) (finish : Nat → Bool) : Nat → Nat → Nat → Bo
     (members pool).any fun v =>
       let near := G v
       choose G finish k (below (pool &&& near) v) (globalPool &&& near)
+
+/-- The outer branches read the same immutable graph and can run concurrently. -/
+def parallelStep (G : Neighbours) (finish : Nat → Bool) (remaining pool globalPool : Nat) : Bool :=
+  let tasks := (members pool).map fun v => Task.spawn fun _ =>
+    let near := G v
+    choose G finish remaining (below (pool &&& near) v) (globalPool &&& near)
+  tasks.any Task.get
+
+theorem parallelStep_eq (G : Neighbours) (finish : Nat → Bool) (remaining pool globalPool : Nat) :
+    parallelStep G finish remaining pool globalPool = choose G finish (remaining+1) pool globalPool := by
+  simp [parallelStep, choose, List.any_map, Function.comp_def, Task.spawn]
 
 /-- Every compatible choice is visited. The list ys is reserved for the continuation. -/
 theorem choose_complete (G : Neighbours) (finish : Nat → Bool) (xs ys : List Nat)

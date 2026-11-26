@@ -140,6 +140,7 @@ theorem accepts_eight (xs : List Nat) (hlen : xs.length = 8) (nd : xs.Nodup)
   obtain ⟨c, hc, h3⟩ := hc
   apply List.any_eq_true.mpr
   refine ⟨c, hc, ?_⟩
+  rw [parallelStep_eq]
   apply triple_phase xs c _ _ _ nd good h3
   · intro u hu he
     obtain ⟨hi,hl⟩ := bounds u hu

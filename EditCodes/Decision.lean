@@ -21,6 +21,6 @@ that triple is chosen, look for the other five in its common neighbourhood. -/
 def possibleEight (size : Nat) : Bool :=
   let rows := graphFor size
   let G := adjacency rows
-  [0, 1, 2].any fun c => choose G (possibleFive G c) 3 (colourMask c) longMask
+  [0, 1, 2].any fun c => parallelStep G (possibleFive G c) 2 (colourMask c) longMask
 
 end EditCodes.Ternary

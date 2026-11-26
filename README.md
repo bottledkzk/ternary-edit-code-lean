@@ -39,7 +39,7 @@ C++ 复算采用另一种搜索。统一重命名三个字母可以把第一个�
 lake build
 ```
 
-上界的最后一次有限计算使用 `native_decide`，因此主定理的信任范围包括 Lean 编译器以及 `Lean.ofReduceBool`。根模块的 `#print axioms` 会列出实际依赖。C++ 程序独立生成图与搜索结果，Lean 构建不读取它的输出。[有限计算](EditCodes/Computation.lean) · [Lean 对原生判定的说明](https://lean-lang.org/doc/reference/latest/Tactic-Proofs/Tactic-Reference/#native_decide)
+上界的最后一次有限计算使用 `native_decide`，因此主定理的信任范围包括 Lean 编译器以及 `Lean.ofReduceBool`。根模块的 `#print axioms` 会列出实际依赖。C++ 程序独立生成图与搜索结果，Lean 构建不读取它的输出。[有限计算和定理](EditCodes.lean) · [Lean 对原生判定的说明](https://lean-lang.org/doc/reference/latest/Tactic-Proofs/Tactic-Reference/#native_decide)
 
 用支持 C++20 的编译器可单独复算。
 
